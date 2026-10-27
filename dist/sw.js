@@ -1,4 +1,4 @@
-const CACHE_NAME = "teknosoz-v2-real-models";
+const CACHE_NAME = "teknosoz-v3-qr-unlock";
 const CORE = [
   "./",
   "./index.html",
@@ -8,14 +8,6 @@ const CORE = [
   "./vendor/model-viewer.min.js",
   "./manifest.webmanifest",
   "./assets/icon.svg",
-  "./assets/models/iha.glb",
-  "./assets/models/drone.glb",
-  "./assets/models/roket.glb",
-  "./assets/models/uydu.glb",
-  "./assets/models/helikopter.glb",
-  "./assets/models/insansi-robot.glb",
-  "./assets/models/elektrikli-otomobil.glb",
-  "./assets/models/mars-araci.glb",
   "./assets/qr/iha.svg",
   "./assets/qr/drone.svg",
   "./assets/qr/roket.svg",

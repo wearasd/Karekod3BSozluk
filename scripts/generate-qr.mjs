@@ -12,6 +12,7 @@ await mkdir(outDir, { recursive: true });
 for (const slug of slugs) {
   const url = new URL(baseUrl);
   url.searchParams.set("terim", slug);
+  url.searchParams.set("qr", "1");
   const svg = await QRCode.toString(url.href, { type: "svg", errorCorrectionLevel: "H", margin: 2, color: { dark: "#07131fff", light: "#fffefaff" } });
   await writeFile(join(outDir, `${slug}.svg`), svg, "utf8");
 }

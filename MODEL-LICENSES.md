@@ -7,8 +7,8 @@ Bu projedeki tüm GLB modeller [CC0 1.0 Universal](https://creativecommons.org/p
 - Roket — [Launch Complex Pad and Yard](https://3dassets.dev/assets/rocket-launch-pad-and-gantry-launch-comp-d4095ed2-starter-scene), 3D Assets
 - Uydu — [Comms Satellite](https://3dassets.dev/assets/solar-system-and-astronauts-comms-satellite-f1641e33), 3D Assets
 - Helikopter — [Utility Helicopter](https://3dassets.dev/assets/transport-collection-hd-utility-helicopter-18e3c5fe), 3D Assets
-- İnsansı Robot — [Humanoid Worker](https://3dassets.dev/assets/robots-and-drones-kit-humanoid-worker-85f63bad), 3D Assets
+- Robot — [RobotExpressive](https://github.com/mrdoob/three.js/tree/dev/examples/models/gltf/RobotExpressive), Tomás Laulhé; Don McCurdy tarafından glTF biçimine dönüştürülmüştür, CC0 1.0
 - Elektrikli Otomobil — [Electric Crossover](https://3dassets.dev/assets/road-car-showroom-lineup-electric-crossover-c7731548), 3D Assets
-- Mars Aracı — [Small Robotic Survey Rover](https://3dassets.dev/assets/lunar-surface-colony-and-rovers-small-survey-rover-f1fa6584), 3D Assets
+- Uzay Keşif Aracı — [Small Robotic Survey Rover](https://3dassets.dev/assets/lunar-surface-colony-and-rovers-small-survey-rover-f1fa6584), 3D Assets
 
 Görüntüleyici: [`<model-viewer>` 4.4.0](https://github.com/google/model-viewer), Apache-2.0.

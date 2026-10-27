@@ -8,6 +8,8 @@ MEB proje çalışması için hazırlanan mobil öncelikli, QR kodlu ve 3B tekno
 - Sekiz adet web için optimize edilmiş gerçek GLB model
 - Android Scene Viewer, WebXR ve iOS Quick Look destekli gerçek AR modu
 - QR kod okuyucu ve her maddeye özel indirilebilir QR kod
+- 3B modelleri yalnız doğrulanmış QR bağlantısıyla açan keşif akışı
+- Günlük mini test ve cihazda saklanan keşif ilerlemesi
 - Sesli okuma, paylaşma ve yazdırma
 - PWA olarak telefona kurulabilme ve çevrimdışı kullanım
 - Capacitor yapılandırmasıyla Android APK'ye dönüştürmeye hazır yapı

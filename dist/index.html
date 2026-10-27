@@ -4,10 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#07131f" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="format-detection" content="telephone=no" />
     <meta name="description" content="Teknolojik araçları 3B modeller ve artırılmış gerçeklikle keşfet." />
     <title>TeknoSöz 3B — Teknoloji Sözlüğü</title>
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="icon" href="./assets/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./assets/icon.svg" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
@@ -35,8 +39,8 @@
         <div class="hero">
           <div class="hero-copy">
             <p class="eyebrow"><span></span> MEB PROJE ÇALIŞMASI · 2026</p>
-            <h1 id="heroTitle">Teknolojiye<br /><em>dokunarak</em> öğren.</h1>
-            <p class="hero-lead">Havacılık, uzay ve robotik dünyasının araçlarını incele. Modelleri döndür, yakından bak ve kameranla gerçek dünyaya taşı.</p>
+            <h1 id="heroTitle">Kodu okut.<br /><em>Keşif</em> başlasın.</h1>
+            <p class="hero-lead">Havacılık, uzay ve robotik dünyasını QR kodlarla keşfet. Her kod, sana özel bir bilgi kartını ve gizli 3B modeli açar.</p>
             <div class="hero-actions">
               <button class="primary-button" data-route="dictionary">
                 Sözlüğü keşfet
@@ -51,13 +55,17 @@
             </div>
           </div>
 
-          <div class="hero-visual" aria-label="Etkileşimli İHA modeli">
+          <div class="hero-visual" aria-label="QR kodla açılan 3B model deneyimi">
             <div class="orbit orbit-one"></div>
             <div class="orbit orbit-two"></div>
-            <div class="visual-label label-top"><span></span> İNSANSIZ HAVA ARACI</div>
-            <model-viewer id="heroModel" src="./assets/models/iha.glb" alt="Döndürülebilir üç boyutlu İHA modeli" camera-controls auto-rotate autoplay shadow-intensity="1.2" exposure="1.05" interaction-prompt="none"></model-viewer>
-            <div class="drag-hint"><span>↔</span> Döndürmek için sürükle</div>
-            <div class="coordinate" aria-hidden="true">X 41.02<br />Y 28.97<br />Z 1.42</div>
+            <div class="visual-label label-top"><span></span> QR DESTEKLİ 3B SÖZLÜK</div>
+            <div class="qr-reveal-scene" aria-hidden="true">
+              <div class="holo-card"><span>3B</span><i></i><i></i><i></i></div>
+              <div class="qr-core"><div class="fake-qr"></div><span>TARA</span></div>
+              <div class="scan-beam"></div>
+            </div>
+            <div class="drag-hint"><span>⌁</span> QR kod okutulunca 3B model açılır</div>
+            <div class="coordinate" aria-hidden="true">SCAN READY<br />MODEL LOCKED<br />AR ENABLED</div>
           </div>
         </div>
 
@@ -77,6 +85,20 @@
             <button class="outline-button" data-route="dictionary">Tümünü gör <span>→</span></button>
           </div>
           <div id="featuredGrid" class="featured-grid"></div>
+        </section>
+
+        <section class="challenge-section" aria-labelledby="challengeTitle">
+          <div class="challenge-copy">
+            <p class="eyebrow"><span></span> BİLGİNİ DENE</p>
+            <h2 id="challengeTitle">Günün mini testi.</h2>
+            <p>Her ziyaretinde kısa bir soruyla öğrendiklerini pekiştir.</p>
+            <div class="learning-progress">
+              <div><span>KEŞİF İLERLEMEN</span><strong id="progressText">0 / 8</strong></div>
+              <div class="progress-track"><i id="progressBar"></i></div>
+              <small>QR ile açtığın her yeni model ilerlemene eklenir.</small>
+            </div>
+          </div>
+          <div id="quizCard" class="quiz-card" aria-live="polite"></div>
         </section>
 
         <section class="how-section">
