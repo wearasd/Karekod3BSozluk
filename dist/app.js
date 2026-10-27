@@ -44,12 +44,34 @@
     if (name === "dictionary") setTimeout(() => qs("#searchInput")?.focus({ preventScroll: true }), 300);
   }
 
+  function getEffectiveBaseUrl() {
+    const saved = localStorage.getItem("teknosoz-live-url");
+    if (saved && saved.trim()) return saved.trim();
+
+    // ChatGPT / OpenAI Canvas veya iframe kontrolü
+    const isChatGPT = location.hostname.includes("chatgpt.com") ||
+                      location.hostname.includes("openai.com") ||
+                      (window.self !== window.top);
+
+    if (isChatGPT) {
+      return "https://teknosoz-3b.vercel.app/";
+    }
+
+    return `${location.origin}${location.pathname}`;
+  }
+
   function getItemQrUrl(slug) {
-    const url = new URL(location.href);
-    url.searchParams.set("terim", slug);
-    url.searchParams.set("qr", "1");
-    url.searchParams.delete("sayfa");
-    return url.href;
+    const base = getEffectiveBaseUrl();
+    try {
+      const url = new URL(base, location.href);
+      url.searchParams.set("terim", slug);
+      url.searchParams.set("qr", "1");
+      url.searchParams.delete("sayfa");
+      return url.href;
+    } catch (_) {
+      const sep = base.includes("?") ? "&" : "?";
+      return `${base}${sep}terim=${encodeURIComponent(slug)}&qr=1`;
+    }
   }
 
   function renderQrSvg(targetUrl, containerEl, downloadBtnEl, slug) {
@@ -98,10 +120,13 @@
           ` : `
             <div class="locked-model">
               <div class="locked-glyph">${escapeHtml(item.glyph)}</div>
-              <span class="lock-icon">⌁</span>
-              <h2>3B model kilitli</h2>
-              <p>Bu aracın karekodunu aç ve telefonunun kamerasıyla okut; 3B model ve AR deneyimi telefonunda başlasın.</p>
-              <button class="primary-button unlock-model-button" style="background: var(--orange); color: white;">Karekodu göster <span>⌗</span></button>
+              <div id="lockedQrBox" class="locked-qr-preview" title="Karekodu büyütmek için tıkla"></div>
+              <h2>3B Modeli Telefonda Gör</h2>
+              <p>Telefonunun kamerasını açıp bu karekodu okut; 3B model telefonunda anında açılsın!</p>
+              <div style="display:flex; gap:10px; align-items:center; z-index:2; flex-wrap:wrap; justify-content:center;">
+                <button class="primary-button unlock-model-button" style="background: var(--orange); color: white;">Karekodu Büyüt <span>⌗</span></button>
+                <button id="previewHereBtn" class="outline-button" style="color:white; border-color:rgba(255,255,255,.35); font-size:12px; padding:10px 16px;">🖥️ Masaüstünde İncele</button>
+              </div>
             </div>
           `}
           <div class="model-toolbar">
@@ -151,6 +176,11 @@
     updateActiveNav("dictionary");
 
     const qrUrl = getItemQrUrl(item.slug);
+    const lockedQrBox = qs("#lockedQrBox");
+    if (lockedQrBox) {
+      renderQrSvg(qrUrl, lockedQrBox, null, item.slug);
+      lockedQrBox.addEventListener("click", () => openQrModal(item.slug));
+    }
     const detailQrBox = qs("#detailQrBox");
     const detailQrDownload = qs("#detailQrDownload");
     if (detailQrBox) {
@@ -341,6 +371,18 @@
     const container = qs("#qrCodeContainer");
     const directUrlInput = qs("#qrDirectUrl");
     const downloadBtn = qs("#downloadQrBtn");
+    const baseUrlInput = qs("#qrBaseUrlInput");
+    const hostHint = qs("#qrHostHint");
+
+    if (baseUrlInput) baseUrlInput.value = getEffectiveBaseUrl();
+    const isChatGPT = location.hostname.includes("chatgpt.com") || location.hostname.includes("openai.com") || (window.self !== window.top);
+    if (hostHint) {
+      if (isChatGPT) {
+        hostHint.textContent = "ChatGPT önizlemesindesin. Telefonun açması için canlı sitenin (Vercel vb.) linkini girebilirsin.";
+      } else {
+        hostHint.textContent = "Canlı site adresin";
+      }
+    }
 
     if (directUrlInput) directUrlInput.value = qrUrl;
     renderQrSvg(qrUrl, container, downloadBtn, item.slug);
@@ -368,6 +410,19 @@
     });
     qs("#closeQrDialog")?.addEventListener("click", closeQrModal);
     qs("#qrDialog")?.addEventListener("cancel", e => { e.preventDefault(); closeQrModal(); });
+    qs("#saveQrBaseUrlBtn")?.addEventListener("click", () => {
+      const val = qs("#qrBaseUrlInput")?.value.trim();
+      if (val) {
+        localStorage.setItem("teknosoz-live-url", val);
+        showToast("Canlı site adresi kaydedildi! Karekod güncellendi.");
+        openQrModal(state.currentItem ? state.currentItem.slug : data[0].slug);
+        if (state.currentItem) openDetail(state.currentItem.slug, { push: false });
+      } else {
+        localStorage.removeItem("teknosoz-live-url");
+        showToast("Varsayılan adrese dönüldü.");
+        openQrModal(state.currentItem ? state.currentItem.slug : data[0].slug);
+      }
+    });
     qs("#copyQrUrlBtn")?.addEventListener("click", async () => {
       const url = qs("#qrDirectUrl")?.value;
       if (!url) return;

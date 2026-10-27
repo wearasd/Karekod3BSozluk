@@ -12,7 +12,7 @@
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="icon" href="./assets/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="./assets/icon.svg" />
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=2" />
   </head>
   <body>
     <a class="skip-link" href="#main">İçeriğe geç</a>
@@ -216,9 +216,20 @@
           </div>
         </div>
 
+        <div class="qr-target-setup" style="background: var(--paper-2); padding: 12px; border-radius: 10px; font-size: 11px; border: 1px dashed var(--line);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 4px;">
+            <strong style="color: var(--ink);">🌐 Karekodun Telefonda Açacağı Site Adresi:</strong>
+            <span id="qrHostHint" style="color: var(--orange); font-size: 10px; font-weight: 700;"></span>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <input id="qrBaseUrlInput" type="url" placeholder="https://ornek-siteniz.vercel.app" style="flex: 1; padding: 7px 10px; border: 1px solid var(--line); border-radius: 6px; font: 11px 'DM Mono', monospace; background: white;" />
+            <button id="saveQrBaseUrlBtn" class="primary-button" type="button" style="padding: 7px 12px; font-size: 11px; background: var(--ink); color: white;">Adresi Uygula</button>
+          </div>
+        </div>
+
         <footer class="qr-dialog-footer">
           <div class="qr-url-preview">
-            <span class="qr-url-label">Doğrudan Bağlantı:</span>
+            <span class="qr-url-label">Karekod Bağlantısı:</span>
             <input id="qrDirectUrl" type="text" readonly value="" />
             <button id="copyQrUrlBtn" class="outline-button" type="button">Kopyala</button>
           </div>
@@ -232,8 +243,8 @@
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
     <script type="module" src="./vendor/model-viewer.min.js"></script>
-    <script src="./vendor/qrcode.js"></script>
-    <script src="./data.js"></script>
-    <script src="./app.js"></script>
+    <script src="./vendor/qrcode.js?v=2"></script>
+    <script src="./data.js?v=2"></script>
+    <script src="./app.js?v=2"></script>
   </body>
 </html>
