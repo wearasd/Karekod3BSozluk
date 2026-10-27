@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
-const baseUrl = process.env.TEKNO_BASE_URL || "https://teknosoz-3b.example/";
+const baseUrl = process.env.TEKNO_BASE_URL || "https://my-kelimeler.vercel.app/";
 const dataSource = await readFile(join(root, "dist", "data.js"), "utf8");
 const slugs = [...dataSource.matchAll(/slug: "([^"]+)"/g)].map(match => match[1]);
 const outDir = join(root, "dist", "assets", "qr");

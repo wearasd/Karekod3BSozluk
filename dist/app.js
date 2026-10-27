@@ -45,19 +45,7 @@
   }
 
   function getEffectiveBaseUrl() {
-    const saved = localStorage.getItem("teknosoz-live-url");
-    if (saved && saved.trim()) return saved.trim();
-
-    // ChatGPT / OpenAI Canvas veya iframe kontrolü
-    const isChatGPT = location.hostname.includes("chatgpt.com") ||
-                      location.hostname.includes("openai.com") ||
-                      (window.self !== window.top);
-
-    if (isChatGPT) {
-      return "https://my-kelimeler.vercel.app/";
-    }
-
-    return `${location.origin}${location.pathname}`;
+    return "https://my-kelimeler.vercel.app/";
   }
 
   function getItemQrUrl(slug) {
@@ -392,22 +380,6 @@
     });
     qs("#closeQrDialog")?.addEventListener("click", closeQrModal);
     qs("#qrDialog")?.addEventListener("cancel", e => { e.preventDefault(); closeQrModal(); });
-    qs("#changeBaseUrlBtn")?.addEventListener("click", () => {
-      const current = getEffectiveBaseUrl();
-      const entered = prompt("Telefonunun açacağı doğru site adresini (Vercel linkini) girin:\nÖrnek: https://senin-projen.vercel.app", current);
-      if (entered !== null) {
-        if (entered.trim()) {
-          let url = entered.trim();
-          if (!url.startsWith("http://") && !url.startsWith("https://")) url = "https://" + url;
-          localStorage.setItem("teknosoz-live-url", url);
-          showToast("Site adresi güncellendi!");
-        } else {
-          localStorage.removeItem("teknosoz-live-url");
-          showToast("Varsayılan adrese dönüldü.");
-        }
-        openQrModal(state.currentItem ? state.currentItem.slug : data[0].slug);
-      }
-    });
     window.addEventListener("popstate", routeFromUrl);
     window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); state.deferredInstall = e; });
     qs("#installButton").addEventListener("click", async () => {
