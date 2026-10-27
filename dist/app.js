@@ -114,30 +114,16 @@
     views.detail.innerHTML = `
       <div class="detail-layout">
         <div class="detail-model">
-          <span class="model-caption">${unlocked ? "📱 QR DOĞRULANDI · 3B MODEL AÇIK" : "3B MODEL · TELEFONLA OKUT"}</span>
-          ${unlocked ? `
-            <model-viewer id="detailModel" src="${item.asset}" alt="Döndürülebilir ${escapeHtml(item.name)} modeli" camera-controls auto-rotate autoplay ${item.animation ? `animation-name="${item.animation}"` : ""} ar ar-modes="webxr scene-viewer quick-look" shadow-intensity="1.25" shadow-softness=".8" exposure="1.05" interaction-prompt="auto"></model-viewer>
-          ` : `
-            <div class="locked-model">
-              <div class="locked-glyph">${escapeHtml(item.glyph)}</div>
-              <div id="lockedQrBox" class="locked-qr-preview" title="Karekodu büyütmek için tıkla"></div>
-              <h2>3B Modeli Telefonda Gör</h2>
-              <p>Telefonunun kamerasını açıp bu karekodu okut; 3B model telefonunda anında açılsın!</p>
-              <div style="z-index:2;">
-                <button class="primary-button unlock-model-button" style="background: var(--orange); color: white; padding: 12px 28px; font-size: 14px;">Karekodu Büyüt <span>⌗</span></button>
-              </div>
+          <span class="model-caption">${unlocked ? "📱 QR DOĞRULANDI · 3B MODEL AÇIK" : "3B ETKİLEŞİMLİ MODEL"}</span>
+          <model-viewer id="detailModel" src="${item.asset}" alt="Döndürülebilir ${escapeHtml(item.name)} modeli" camera-controls auto-rotate autoplay ${item.animation ? `animation-name="${item.animation}"` : ""} ar ar-modes="webxr scene-viewer quick-look" shadow-intensity="1.25" shadow-softness=".8" exposure="1.05" interaction-prompt="auto"></model-viewer>
+          <div class="model-toolbar">
+            <span>↔ Döndür · kaydırarak yakınlaştır</span>
+            <div>
+              <button id="resetModel">Görünümü sıfırla</button>
+              <button id="openModelQrBtn" class="outline-button" style="font-size: 11px;">📱 Karekod</button>
+              <button class="ar-open">⌾ AR ile görüntüle</button>
             </div>
-          `}
-          ${unlocked ? `
-            <div class="model-toolbar">
-              <span>↔ Döndür · kaydırarak yakınlaştır</span>
-              <div>
-                <button id="resetModel">Görünümü sıfırla</button>
-                <button id="openModelQrBtn" class="outline-button" style="font-size: 11px;">📱 Karekod</button>
-                <button class="ar-open">⌾ AR ile görüntüle</button>
-              </div>
-            </div>
-          ` : ""}
+          </div>
         </div>
         <article class="detail-copy">
           <button class="back-button" data-route="dictionary">← Sözlüğe dön</button>
@@ -169,11 +155,6 @@
     updateActiveNav("dictionary");
 
     const qrUrl = getItemQrUrl(item.slug);
-    const lockedQrBox = qs("#lockedQrBox");
-    if (lockedQrBox) {
-      renderQrSvg(qrUrl, lockedQrBox, null, item.slug);
-      lockedQrBox.addEventListener("click", () => openQrModal(item.slug));
-    }
     const detailQrBox = qs("#detailQrBox");
     const detailQrDownload = qs("#detailQrDownload");
     if (detailQrBox) {
@@ -182,8 +163,6 @@
     }
     qs("#enlargeQrBtn")?.addEventListener("click", () => openQrModal(item.slug));
     qs("#openModelQrBtn")?.addEventListener("click", () => openQrModal(item.slug));
-    qs(".unlock-model-button")?.addEventListener("click", () => openQrModal(item.slug));
-    qs("#previewHereBtn")?.addEventListener("click", () => openDetail(item.slug, { push, unlocked: true }));
 
     const detailModel = qs("#detailModel");
     if (detailModel) {
@@ -196,7 +175,7 @@
       qs(".ar-open")?.addEventListener("click", async () => {
         if (!detailModel.canActivateAR) {
           openQrModal(item.slug);
-          showToast("AR modu için telefonunun kamerasıyla bu karekodu okut.");
+          showToast("AR modu için telefonunla bu karekodu okut.");
           return;
         }
         try { await detailModel.activateAR(); }
