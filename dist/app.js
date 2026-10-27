@@ -392,6 +392,22 @@
     });
     qs("#closeQrDialog")?.addEventListener("click", closeQrModal);
     qs("#qrDialog")?.addEventListener("cancel", e => { e.preventDefault(); closeQrModal(); });
+    qs("#changeBaseUrlBtn")?.addEventListener("click", () => {
+      const current = getEffectiveBaseUrl();
+      const entered = prompt("Telefonunun açacağı doğru site adresini (Vercel linkini) girin:\nÖrnek: https://senin-projen.vercel.app", current);
+      if (entered !== null) {
+        if (entered.trim()) {
+          let url = entered.trim();
+          if (!url.startsWith("http://") && !url.startsWith("https://")) url = "https://" + url;
+          localStorage.setItem("teknosoz-live-url", url);
+          showToast("Site adresi güncellendi!");
+        } else {
+          localStorage.removeItem("teknosoz-live-url");
+          showToast("Varsayılan adrese dönüldü.");
+        }
+        openQrModal(state.currentItem ? state.currentItem.slug : data[0].slug);
+      }
+    });
     window.addEventListener("popstate", routeFromUrl);
     window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); state.deferredInstall = e; });
     qs("#installButton").addEventListener("click", async () => {
