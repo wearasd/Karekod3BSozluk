@@ -123,28 +123,21 @@
               <div id="lockedQrBox" class="locked-qr-preview" title="Karekodu büyütmek için tıkla"></div>
               <h2>3B Modeli Telefonda Gör</h2>
               <p>Telefonunun kamerasını açıp bu karekodu okut; 3B model telefonunda anında açılsın!</p>
-              <div style="display:flex; gap:10px; align-items:center; z-index:2; flex-wrap:wrap; justify-content:center;">
-                <button class="primary-button unlock-model-button" style="background: var(--orange); color: white;">Karekodu Büyüt <span>⌗</span></button>
-                <button id="previewHereBtn" class="outline-button" style="color:white; border-color:rgba(255,255,255,.35); font-size:12px; padding:10px 16px;">🖥️ Masaüstünde İncele</button>
+              <div style="z-index:2;">
+                <button class="primary-button unlock-model-button" style="background: var(--orange); color: white; padding: 12px 28px; font-size: 14px;">Karekodu Büyüt <span>⌗</span></button>
               </div>
             </div>
           `}
-          <div class="model-toolbar">
-            ${unlocked ? `
+          ${unlocked ? `
+            <div class="model-toolbar">
               <span>↔ Döndür · kaydırarak yakınlaştır</span>
               <div>
                 <button id="resetModel">Görünümü sıfırla</button>
                 <button id="openModelQrBtn" class="outline-button" style="font-size: 11px;">📱 Karekod</button>
                 <button class="ar-open">⌾ AR ile görüntüle</button>
               </div>
-            ` : `
-              <span>Karekod butonuna bas, ekranda çıkan kodu telefonuna okut.</span>
-              <div>
-                <button id="previewHereBtn" class="outline-button" style="font-size:11px;">Masaüstünde aç</button>
-                <button id="openModelQrBtn" class="primary-button" style="padding:6px 12px; font-size:11px; background:var(--orange); color:white;">📱 Karekod çıkar</button>
-              </div>
-            `}
-          </div>
+            </div>
+          ` : ""}
         </div>
         <article class="detail-copy">
           <button class="back-button" data-route="dictionary">← Sözlüğe dön</button>
@@ -407,7 +400,18 @@
     updateProgress();
     initEvents();
     routeFromUrl();
-    if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("./sw.js").catch(() => {});
+    if (window.caches) {
+      caches.keys().then(names => {
+        for (const name of names) {
+          if (name !== "teknosoz-v5-network-first") caches.delete(name);
+        }
+      });
+    }
+    if ("serviceWorker" in navigator && location.protocol !== "file:") {
+      navigator.serviceWorker.register("./sw.js").then(reg => {
+        reg.update();
+      }).catch(() => {});
+    }
   }
 
   init();
