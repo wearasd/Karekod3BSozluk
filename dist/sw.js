@@ -1,4 +1,4 @@
-const CACHE_NAME = "teknosoz-v3-qr-unlock";
+const CACHE_NAME = "teknosoz-v3-qr-modal-v1";
 const CORE = [
   "./",
   "./index.html",
@@ -6,6 +6,7 @@ const CORE = [
   "./data.js",
   "./app.js",
   "./vendor/model-viewer.min.js",
+  "./vendor/qrcode.js",
   "./manifest.webmanifest",
   "./assets/icon.svg",
   "./assets/qr/iha.svg",

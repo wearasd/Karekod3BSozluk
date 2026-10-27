@@ -28,9 +28,9 @@
         <button class="nav-link" data-route="dictionary">Sözlük</button>
         <button class="nav-link" data-route="about">Proje</button>
       </nav>
-      <button class="icon-button scan-trigger" type="button" aria-label="QR kod okut">
+      <button class="icon-button qr-modal-trigger" type="button" aria-label="Karekod göster">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h5v2H6v3H4V4Zm11 0h5v5h-2V6h-3V4ZM4 15h2v3h3v2H4v-5Zm14 0h2v5h-5v-2h3v-3ZM8 8h8v8H8V8Zm2 2v4h4v-4h-4Z"/></svg>
-        <span>QR Okut</span>
+        <span>Karekod</span>
       </button>
     </header>
 
@@ -46,7 +46,7 @@
                 Sözlüğü keşfet
                 <span aria-hidden="true">↗</span>
               </button>
-              <button class="text-button scan-trigger"><span class="scan-mini" aria-hidden="true"></span> QR kod okut</button>
+              <button class="text-button qr-modal-trigger"><span class="scan-mini" aria-hidden="true"></span> Karekod göster</button>
             </div>
             <div class="hero-stats" aria-label="Proje istatistikleri">
               <div><strong>08</strong><span>3B araç</span></div>
@@ -64,8 +64,8 @@
               <div class="qr-core"><div class="fake-qr"></div><span>TARA</span></div>
               <div class="scan-beam"></div>
             </div>
-            <div class="drag-hint"><span>⌁</span> QR kod okutulunca 3B model açılır</div>
-            <div class="coordinate" aria-hidden="true">SCAN READY<br />MODEL LOCKED<br />AR ENABLED</div>
+            <div class="drag-hint"><span>⌁</span> Telefonunla karekodu okut, 3B modeli aç</div>
+            <div class="coordinate" aria-hidden="true">QR ACTIVE<br />MODEL READY<br />AR ENABLED</div>
           </div>
         </div>
 
@@ -106,9 +106,9 @@
             <p class="eyebrow light"><span></span> NASIL ÇALIŞIR?</p>
             <h2>Bir kod.<br />Yeni bir dünya.</h2>
             <div class="steps">
-              <div><b>01</b><span><strong>Kodu okut</strong>Basılı sözlükteki QR kodu telefonunun kamerasıyla tara.</span></div>
-              <div><b>02</b><span><strong>Modeli keşfet</strong>Aracı 360° döndür, yakınlaştır ve parçalarını öğren.</span></div>
-              <div><b>03</b><span><strong>Gerçeğe taşı</strong>AR moduyla modeli çevrendeki dünyada görüntüle.</span></div>
+              <div><b>01</b><span><strong>Kodu okut</strong>Ekranda çıkan karekodu telefonunun kamerasıyla tara.</span></div>
+              <div><b>02</b><span><strong>Modeli keşfet</strong>Telefonunda aracı 360° döndür, yakınlaştır ve parçalarını öğren.</span></div>
+              <div><b>03</b><span><strong>Gerçeğe taşı</strong>AR moduyla modeli odanda veya masanda görüntüle.</span></div>
             </div>
           </div>
           <div class="qr-demo" aria-hidden="true">
@@ -177,36 +177,62 @@
     <nav class="mobile-nav" aria-label="Mobil menü">
       <button data-route="home" class="active"><span>⌂</span>Ana sayfa</button>
       <button data-route="dictionary"><span>⌕</span>Sözlük</button>
-      <button class="scan-trigger scan-fab" aria-label="QR kod okut"><span></span></button>
+      <button class="qr-modal-trigger scan-fab" aria-label="Karekod göster"><span></span></button>
       <button data-route="about"><span>◎</span>Proje</button>
       <button id="installButton"><span>⇩</span>Yükle</button>
     </nav>
 
-    <dialog id="cameraDialog" class="camera-dialog">
-      <div class="camera-stage">
-        <video id="cameraVideo" playsinline muted></video>
-        <canvas id="arCanvas"></canvas>
-        <div class="camera-shade"></div>
-        <div class="camera-header">
-          <div><span id="cameraModeLabel">AR MODU</span><strong id="cameraTitle">Modeli ortamına yerleştir</strong></div>
-          <button id="closeCamera" class="round-button" aria-label="Kamerayı kapat">×</button>
-        </div>
-        <div id="scannerFrame" class="scanner-frame" hidden><i></i><i></i><i></i><i></i><span></span></div>
-        <div id="cameraMessage" class="camera-message" hidden></div>
-        <div class="camera-controls">
-          <p id="cameraHint">Modeli döndürmek için sürükle · boyut için kaydır</p>
-          <div>
-            <button id="sizeDown" class="round-button" aria-label="Modeli küçült">−</button>
-            <button id="captureButton" class="capture-button" aria-label="Fotoğraf çek"><span></span></button>
-            <button id="sizeUp" class="round-button" aria-label="Modeli büyüt">+</button>
+    <dialog id="qrDialog" class="qr-dialog">
+      <div class="qr-dialog-content">
+        <header class="qr-dialog-header">
+          <div class="qr-dialog-title-group">
+            <span class="qr-badge">📱 TELEFONDA 3B / AR DENEYİMİ</span>
+            <h2 id="qrDialogTitle">İnsansız Hava Aracı (İHA)</h2>
+            <p id="qrDialogDesc">Telefonunun kamerasını açıp aşağıdaki karekodu okut; 3B model telefonunda anında açılsın!</p>
+          </div>
+          <button id="closeQrDialog" class="round-button close-btn" aria-label="Kapat">×</button>
+        </header>
+
+        <div id="qrItemSelector" class="qr-item-selector" aria-label="Araç seçimi"></div>
+
+        <div class="qr-display-box">
+          <div class="qr-code-frame">
+            <div id="qrCodeContainer" class="qr-code-container"></div>
+          </div>
+
+          <div class="qr-instructions">
+            <div class="qr-step-chip">
+              <b>1</b>
+              <span>Telefonunun kamerasını aç</span>
+            </div>
+            <div class="qr-step-chip">
+              <b>2</b>
+              <span>Kamerayı karekoda doğrult</span>
+            </div>
+            <div class="qr-step-chip">
+              <b>3</b>
+              <span>Gelen bağlantıya dokun, modeli 3B & AR incele!</span>
+            </div>
           </div>
         </div>
+
+        <footer class="qr-dialog-footer">
+          <div class="qr-url-preview">
+            <span class="qr-url-label">Doğrudan Bağlantı:</span>
+            <input id="qrDirectUrl" type="text" readonly value="" />
+            <button id="copyQrUrlBtn" class="outline-button" type="button">Kopyala</button>
+          </div>
+          <div class="qr-action-buttons">
+            <a id="downloadQrBtn" class="primary-button" download="karekod.svg">Karekodu İndir (SVG)</a>
+          </div>
+        </footer>
       </div>
     </dialog>
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
     <script type="module" src="./vendor/model-viewer.min.js"></script>
+    <script src="./vendor/qrcode.js"></script>
     <script src="./data.js"></script>
     <script src="./app.js"></script>
   </body>

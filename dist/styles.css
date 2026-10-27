@@ -265,6 +265,194 @@ footer { min-height: 120px; padding: 32px clamp(22px, 7vw, 112px); display: flex
 .footer-brand { color: var(--ink); }
 .mobile-nav { display: none; }
 
+/* QR Dialog */
+.qr-dialog {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  max-width: min(92vw, 540px);
+  width: 100%;
+  border-radius: var(--radius);
+  color: var(--ink);
+  overflow: visible;
+}
+.qr-dialog::backdrop {
+  background: rgba(7, 19, 31, 0.72);
+  backdrop-filter: blur(8px);
+}
+.qr-dialog-content {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: clamp(20px, 4vw, 32px);
+  box-shadow: 0 30px 80px rgba(7, 19, 31, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.qr-dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+.qr-badge {
+  display: inline-block;
+  color: var(--orange);
+  font: 10px "DM Mono", monospace;
+  letter-spacing: .12em;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.qr-dialog-header h2 {
+  margin: 0;
+  font-size: clamp(20px, 3.5vw, 26px);
+  color: var(--ink);
+}
+.qr-dialog-header p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.qr-dialog .close-btn {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 24px;
+  flex-shrink: 0;
+  transition: .2s ease;
+}
+.qr-dialog .close-btn:hover {
+  background: var(--ink);
+  color: white;
+}
+.qr-item-selector {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scrollbar-width: thin;
+}
+.qr-item-selector button {
+  border: 1px solid var(--line);
+  background: var(--white);
+  padding: 6px 12px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: .15s ease;
+}
+.qr-item-selector button.active,
+.qr-item-selector button:hover {
+  background: var(--ink);
+  color: white;
+  border-color: var(--ink);
+}
+.qr-display-box {
+  display: grid;
+  grid-template-columns: 210px 1fr;
+  gap: 20px;
+  align-items: center;
+  background: var(--white);
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+}
+.qr-code-frame {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  padding: 10px;
+  box-shadow: 0 8px 24px rgba(7, 19, 31, 0.08);
+}
+.qr-code-container {
+  width: 180px;
+  height: 180px;
+  display: grid;
+  place-items: center;
+}
+.qr-code-container svg,
+.qr-code-container img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.qr-instructions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.qr-step-chip {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ink);
+}
+.qr-step-chip b {
+  width: 22px;
+  height: 22px;
+  background: var(--cyan);
+  color: var(--ink);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.qr-dialog-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.qr-url-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+.qr-url-label {
+  font: 11px "DM Mono", monospace;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.qr-url-preview input {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  font: 11px "DM Mono", monospace;
+  color: var(--ink);
+  outline: none;
+  min-width: 0;
+}
+.qr-action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+@media (max-width: 600px) {
+  .qr-display-box {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: left;
+  }
+  .qr-code-container {
+    width: 200px;
+    height: 200px;
+  }
+}
+
 .camera-dialog { width: 100%; max-width: none; height: 100%; max-height: none; margin: 0; padding: 0; border: 0; background: black; color: white; }
 .camera-dialog::backdrop { background: black; }
 .camera-stage { width: 100%; height: 100%; position: relative; overflow: hidden; }

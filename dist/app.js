@@ -44,17 +44,81 @@
     if (name === "dictionary") setTimeout(() => qs("#searchInput")?.focus({ preventScroll: true }), 300);
   }
 
+  function getItemQrUrl(slug) {
+    const url = new URL(location.href);
+    url.searchParams.set("terim", slug);
+    url.searchParams.set("qr", "1");
+    url.searchParams.delete("sayfa");
+    return url.href;
+  }
+
+  function renderQrSvg(targetUrl, containerEl, downloadBtnEl, slug) {
+    if (window.QRCode && typeof window.QRCode.toString === "function") {
+      window.QRCode.toString(targetUrl, {
+        type: "svg",
+        margin: 1,
+        errorCorrectionLevel: "H",
+        color: { dark: "#07131fff", light: "#fffefaff" }
+      }, (err, svg) => {
+        if (!err && svg) {
+          containerEl.innerHTML = svg;
+          if (downloadBtnEl) {
+            const blob = new Blob([svg], { type: "image/svg+xml" });
+            downloadBtnEl.href = URL.createObjectURL(blob);
+            downloadBtnEl.download = `teknosoz-${slug}-qr.svg`;
+          }
+          return;
+        }
+        fallbackSvg(containerEl, downloadBtnEl, slug);
+      });
+    } else {
+      fallbackSvg(containerEl, downloadBtnEl, slug);
+    }
+  }
+
+  function fallbackSvg(containerEl, downloadBtnEl, slug) {
+    containerEl.innerHTML = `<img src="./assets/qr/${slug}.svg" alt="${slug} QR kodu" style="width:100%;height:100%;object-fit:contain;" />`;
+    if (downloadBtnEl) {
+      downloadBtnEl.href = `./assets/qr/${slug}.svg`;
+      downloadBtnEl.download = `teknosoz-${slug}-qr.svg`;
+    }
+  }
+
   function openDetail(slug, { push = true, unlocked = false } = {}) {
     const item = data.find(entry => entry.slug === slug);
     if (!item) return showView("dictionary", { push });
     state.currentItem = item;
+
     views.detail.innerHTML = `
       <div class="detail-layout">
         <div class="detail-model">
-          <span class="model-caption">${unlocked ? "QR DOĞRULANDI · 3B MODEL AÇIK" : "3B MODEL · QR İLE AÇILIR"}</span>
-          ${unlocked ? `<model-viewer id="detailModel" src="${item.asset}" alt="Döndürülebilir ${escapeHtml(item.name)} modeli" camera-controls auto-rotate autoplay ${item.animation ? `animation-name="${item.animation}"` : ""} ar ar-modes="webxr scene-viewer quick-look" shadow-intensity="1.25" shadow-softness=".8" exposure="1.05" interaction-prompt="auto"></model-viewer>` : `<div class="locked-model"><div class="locked-glyph">${escapeHtml(item.glyph)}</div><span class="lock-icon">⌁</span><h2>3B model kilitli</h2><p>Bu aracın QR kodunu okutarak etkileşimli modeli ve AR modunu aç.</p><button class="primary-button unlock-model-button">QR kod okut <span>⌗</span></button></div>`}
+          <span class="model-caption">${unlocked ? "📱 QR DOĞRULANDI · 3B MODEL AÇIK" : "3B MODEL · TELEFONLA OKUT"}</span>
+          ${unlocked ? `
+            <model-viewer id="detailModel" src="${item.asset}" alt="Döndürülebilir ${escapeHtml(item.name)} modeli" camera-controls auto-rotate autoplay ${item.animation ? `animation-name="${item.animation}"` : ""} ar ar-modes="webxr scene-viewer quick-look" shadow-intensity="1.25" shadow-softness=".8" exposure="1.05" interaction-prompt="auto"></model-viewer>
+          ` : `
+            <div class="locked-model">
+              <div class="locked-glyph">${escapeHtml(item.glyph)}</div>
+              <span class="lock-icon">⌁</span>
+              <h2>3B model kilitli</h2>
+              <p>Bu aracın karekodunu aç ve telefonunun kamerasıyla okut; 3B model ve AR deneyimi telefonunda başlasın.</p>
+              <button class="primary-button unlock-model-button" style="background: var(--orange); color: white;">Karekodu göster <span>⌗</span></button>
+            </div>
+          `}
           <div class="model-toolbar">
-            ${unlocked ? `<span>↔ Döndür · kaydırarak yakınlaştır</span><div><button id="resetModel">Görünümü sıfırla</button><button class="ar-open">⌾ AR ile görüntüle</button></div>` : `<span>Basılı sözlükteki veya ekrandaki QR kodu tara.</span>`}
+            ${unlocked ? `
+              <span>↔ Döndür · kaydırarak yakınlaştır</span>
+              <div>
+                <button id="resetModel">Görünümü sıfırla</button>
+                <button id="openModelQrBtn" class="outline-button" style="font-size: 11px;">📱 Karekod</button>
+                <button class="ar-open">⌾ AR ile görüntüle</button>
+              </div>
+            ` : `
+              <span>Karekod butonuna bas, ekranda çıkan kodu telefonuna okut.</span>
+              <div>
+                <button id="previewHereBtn" class="outline-button" style="font-size:11px;">Masaüstünde aç</button>
+                <button id="openModelQrBtn" class="primary-button" style="padding:6px 12px; font-size:11px; background:var(--orange); color:white;">📱 Karekod çıkar</button>
+              </div>
+            `}
           </div>
         </div>
         <article class="detail-copy">
@@ -69,34 +133,58 @@
           <aside class="fact-box"><span>BUNU BİLİYOR MUYDUN?</span><p>${escapeHtml(item.fact)}</p></aside>
           <section class="info-block model-credit"><h2>3B MODEL</h2><p>Web için optimize edilmiş CC0 model. <a href="${item.assetSource}" target="_blank" rel="noopener">Model kaynağını görüntüle ↗</a></p></section>
           <section class="info-block"><h2>ARAÇLAR</h2><div class="part-list"><button id="speakButton" class="outline-button">▶ Sesli dinle</button><button id="shareButton" class="outline-button">↗ Paylaş</button><button id="printButton" class="outline-button">⌑ Yazdır</button></div></section>
-          <aside class="qr-card">
-            <img src="./assets/qr/${item.slug}.svg" alt="${escapeHtml(item.name)} sayfasının QR kodu" />
-            <div><h2>Bu maddeyi telefonunda aç</h2><p>QR kodu kamerayla okut; 3B modeli ve AR deneyimini hemen başlat.</p><a href="./assets/qr/${item.slug}.svg" download="teknosoz-${item.slug}-qr.svg">QR kodu indir</a></div>
+          <aside class="qr-card" style="cursor: pointer;" title="Karekodu büyütmek için tıkla">
+            <div id="detailQrBox" style="width: 112px; height: 112px; display: grid; place-items: center; background: white; border: 1px solid var(--line); border-radius: 8px; padding: 4px;"></div>
+            <div>
+              <h2>Bu maddeyi telefonunda aç</h2>
+              <p>Telefonunun kamerasını açıp bu karekodu okut; 3B modeli ve AR deneyimini telefonunda hemen başlat.</p>
+              <div style="display:flex; gap:12px; align-items:center; margin-top:8px;">
+                <button id="enlargeQrBtn" class="outline-button" type="button" style="font-size:11px; padding:6px 12px;">🔍 Karekodu Büyüt</button>
+                <a id="detailQrDownload" href="./assets/qr/${item.slug}.svg" download="teknosoz-${item.slug}-qr.svg" style="font-size:11px; font-weight:800; color:var(--ink);">Karekodu indir ↗</a>
+              </div>
+            </div>
           </aside>
         </article>
       </div>`;
     Object.values(views).forEach(el => el.classList.remove("active"));
     views.detail.classList.add("active");
     updateActiveNav("dictionary");
+
+    const qrUrl = getItemQrUrl(item.slug);
+    const detailQrBox = qs("#detailQrBox");
+    const detailQrDownload = qs("#detailQrDownload");
+    if (detailQrBox) {
+      renderQrSvg(qrUrl, detailQrBox, detailQrDownload, item.slug);
+      detailQrBox.addEventListener("click", () => openQrModal(item.slug));
+    }
+    qs("#enlargeQrBtn")?.addEventListener("click", () => openQrModal(item.slug));
+    qs("#openModelQrBtn")?.addEventListener("click", () => openQrModal(item.slug));
+    qs(".unlock-model-button")?.addEventListener("click", () => openQrModal(item.slug));
+    qs("#previewHereBtn")?.addEventListener("click", () => openDetail(item.slug, { push, unlocked: true }));
+
     const detailModel = qs("#detailModel");
     if (detailModel) {
       markDiscovered(item.slug);
-      qs("#resetModel").addEventListener("click", () => {
+      qs("#resetModel")?.addEventListener("click", () => {
         detailModel.cameraOrbit = "0deg 75deg auto";
         detailModel.fieldOfView = "30deg";
         detailModel.resetTurntableRotation?.();
       });
-      qs(".ar-open").addEventListener("click", async () => {
+      qs(".ar-open")?.addEventListener("click", async () => {
         if (!detailModel.canActivateAR) {
-          showToast("AR modu destekleyen bir telefonda bu sayfayı açmalısın.");
+          openQrModal(item.slug);
+          showToast("AR modu için telefonunun kamerasıyla bu karekodu okut.");
           return;
         }
         try { await detailModel.activateAR(); }
         catch (_) { showToast("AR modu başlatılamadı. Kamera iznini kontrol edebilirsin."); }
       });
-    } else {
-      qs(".unlock-model-button")?.addEventListener("click", openCamera);
     }
+
+    if (unlocked) {
+      showToast(`📱 ${item.name} 3B modeli açıldı!`);
+    }
+
     qs("#speakButton").addEventListener("click", () => speakItem(item));
     qs("#shareButton").addEventListener("click", () => shareItem(item));
     qs("#printButton").addEventListener("click", () => window.print());
@@ -136,13 +224,13 @@
     if (type === "feature") return `
       <article class="feature-card" data-slug="${item.slug}" tabindex="0" role="button" aria-label="${escapeHtml(item.name)} maddesini aç">
         <div class="card-top"><span class="number-badge">${String(index + 1).padStart(2,"0")}</span><span class="category-badge">${escapeHtml(item.category)}</span></div>
-        <div class="card-symbol" aria-hidden="true"><span>${escapeHtml(item.glyph)}</span><i>QR İLE 3B'Yİ AÇ</i></div>
+        <div class="card-symbol" aria-hidden="true"><span>${escapeHtml(item.glyph)}</span><i>3B MODELİ İNCELE</i></div>
         <div class="card-bottom"><div><h3>${escapeHtml(item.name)}</h3><p>${escapeHtml(item.longName)}</p></div><span class="card-arrow">↗</span></div>
       </article>`;
     return `
       <article class="dictionary-card" data-slug="${item.slug}" tabindex="0" role="button" aria-label="${escapeHtml(item.name)} maddesini aç" style="background:${item.color}">
         <header><span class="number-badge">${String(index + 1).padStart(2,"0")}</span><span class="category-badge">${escapeHtml(item.category)}</span></header>
-        <div class="card-symbol" aria-hidden="true"><span>${escapeHtml(item.glyph)}</span><i>QR İLE 3B'Yİ AÇ</i></div>
+        <div class="card-symbol" aria-hidden="true"><span>${escapeHtml(item.glyph)}</span><i>3B MODELİ İNCELE</i></div>
         <footer><h2>${escapeHtml(item.name)}</h2><p>${escapeHtml(item.longName)}</p></footer>
       </article>`;
   }
@@ -227,72 +315,41 @@
     wireCards(root);
   }
 
-  async function openCamera() {
-    const dialog = qs("#cameraDialog");
-    const video = qs("#cameraVideo");
-    const scannerFrame = qs("#scannerFrame");
-    const message = qs("#cameraMessage");
-    message.hidden = true;
-    scannerFrame.hidden = false;
-    qs("#arCanvas").hidden = true;
-    qs("#cameraModeLabel").textContent = "QR TARAYICI";
-    qs("#cameraTitle").textContent = "Kodu kadrajın içine al";
-    qs("#cameraHint").textContent = "Kod algılandığında sayfa otomatik açılır";
-    qs("#sizeDown").style.visibility = "hidden";
-    qs("#sizeUp").style.visibility = "hidden";
-    qs("#captureButton").style.visibility = "hidden";
+  function openQrModal(slug) {
+    const targetSlug = slug || (state.currentItem ? state.currentItem.slug : data[0].slug);
+    const item = data.find(e => e.slug === targetSlug) || data[0];
+    const dialog = qs("#qrDialog");
+    if (!dialog) return;
+
+    qs("#qrDialogTitle").textContent = `${item.name} (${item.longName})`;
+    qs("#qrDialogDesc").textContent = `Telefonunun kamerasını açıp bu karekodu okut; ${item.name} 3B modeli telefonunda anında açılsın!`;
+
+    const selector = qs("#qrItemSelector");
+    if (selector) {
+      selector.innerHTML = data.map(entry => `
+        <button type="button" class="${entry.slug === item.slug ? 'active' : ''}" data-qr-slug="${entry.slug}">
+          ${escapeHtml(entry.glyph)} ${escapeHtml(entry.name)}
+        </button>
+      `).join("");
+
+      qsa("[data-qr-slug]", selector).forEach(btn => {
+        btn.addEventListener("click", () => openQrModal(btn.dataset.qrSlug));
+      });
+    }
+
+    const qrUrl = getItemQrUrl(item.slug);
+    const container = qs("#qrCodeContainer");
+    const directUrlInput = qs("#qrDirectUrl");
+    const downloadBtn = qs("#downloadQrBtn");
+
+    if (directUrlInput) directUrlInput.value = qrUrl;
+    renderQrSvg(qrUrl, container, downloadBtn, item.slug);
+
     dialog.showModal();
-    try {
-      state.cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" } }, audio: false });
-      video.srcObject = state.cameraStream;
-      await video.play();
-      startQrDetection(video);
-    } catch (error) {
-      message.hidden = false;
-      message.textContent = location.protocol === "file:" ? "Kamera özelliği güvenli bağlantıda çalışır. Siteyi localhost veya HTTPS üzerinden açmalısın." : "Kameraya erişilemedi. Tarayıcı ayarlarından kamera izni verip tekrar deneyebilirsin.";
-    }
   }
 
-  async function startQrDetection(video) {
-    const message = qs("#cameraMessage");
-    if (!("BarcodeDetector" in window)) {
-      message.hidden = false;
-      message.textContent = "Bu tarayıcı sayfa içi QR taramayı desteklemiyor. Telefonunun normal kamera uygulamasıyla kodu okutabilirsin.";
-      return;
-    }
-    try {
-      const supported = await BarcodeDetector.getSupportedFormats();
-      if (!supported.includes("qr_code")) throw new Error("QR unsupported");
-      const detector = new BarcodeDetector({ formats: ["qr_code"] });
-      const detect = async () => {
-        if (!state.cameraStream) return;
-        try {
-          const codes = await detector.detect(video);
-          if (codes.length) {
-            const url = new URL(codes[0].rawValue, location.href);
-            const slug = url.searchParams.get("terim");
-            if (data.some(item => item.slug === slug)) {
-              closeCamera(); openDetail(slug, { unlocked: true }); showToast("QR doğrulandı, 3B model açıldı."); return;
-            }
-            message.hidden = false;
-            message.textContent = "Bu QR kod TeknoSöz'e ait görünmüyor.";
-          }
-        } catch (_) {}
-        state.scanTimer = requestAnimationFrame(detect);
-      };
-      detect();
-    } catch (_) {
-      message.hidden = false;
-      message.textContent = "QR tarama bu cihazda kullanılamıyor. Telefonunun normal kamera uygulamasını kullanabilirsin.";
-    }
-  }
-
-  function closeCamera() {
-    cancelAnimationFrame(state.scanTimer);
-    state.scanTimer = 0;
-    state.cameraStream?.getTracks().forEach(track => track.stop());
-    state.cameraStream = null;
-    qs("#cameraDialog").close();
+  function closeQrModal() {
+    qs("#qrDialog")?.close();
   }
 
   function initEvents() {
@@ -300,17 +357,27 @@
       e.preventDefault(); showView(button.dataset.route);
       if (button.dataset.route !== "detail") document.title = "TeknoSöz 3B — Teknoloji Sözlüğü";
     }));
-    qsa(".scan-trigger").forEach(button => button.addEventListener("click", () => openCamera()));
+    qsa(".qr-modal-trigger, .scan-trigger").forEach(button => button.addEventListener("click", () => openQrModal()));
     qsa("[data-category]").forEach(button => button.addEventListener("click", () => {
       state.category = button.dataset.category; renderFilters(); renderDictionary(); showView("dictionary");
     }));
     qs("#searchInput").addEventListener("input", e => { state.query = e.target.value; renderDictionary(); });
     document.addEventListener("keydown", e => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); showView("dictionary"); setTimeout(() => qs("#searchInput").focus(), 50); }
-      if (e.key === "Escape" && qs("#cameraDialog").open) closeCamera();
+      if (e.key === "Escape" && qs("#qrDialog")?.open) closeQrModal();
     });
-    qs("#closeCamera").addEventListener("click", closeCamera);
-    qs("#cameraDialog").addEventListener("cancel", e => { e.preventDefault(); closeCamera(); });
+    qs("#closeQrDialog")?.addEventListener("click", closeQrModal);
+    qs("#qrDialog")?.addEventListener("cancel", e => { e.preventDefault(); closeQrModal(); });
+    qs("#copyQrUrlBtn")?.addEventListener("click", async () => {
+      const url = qs("#qrDirectUrl")?.value;
+      if (!url) return;
+      try {
+        await navigator.clipboard.writeText(url);
+        showToast("Karekod bağlantısı panoya kopyalandı!");
+      } catch (_) {
+        showToast("Bağlantı kopyalanamadı.");
+      }
+    });
     window.addEventListener("popstate", routeFromUrl);
     window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); state.deferredInstall = e; });
     qs("#installButton").addEventListener("click", async () => {
