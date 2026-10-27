@@ -54,7 +54,7 @@
                       (window.self !== window.top);
 
     if (isChatGPT) {
-      return "https://teknosoz-3b.vercel.app/";
+      return "https://my-kelimeler.vercel.app/";
     }
 
     return `${location.origin}${location.pathname}`;
@@ -356,22 +356,8 @@
 
     const qrUrl = getItemQrUrl(item.slug);
     const container = qs("#qrCodeContainer");
-    const directUrlInput = qs("#qrDirectUrl");
     const downloadBtn = qs("#downloadQrBtn");
-    const baseUrlInput = qs("#qrBaseUrlInput");
-    const hostHint = qs("#qrHostHint");
 
-    if (baseUrlInput) baseUrlInput.value = getEffectiveBaseUrl();
-    const isChatGPT = location.hostname.includes("chatgpt.com") || location.hostname.includes("openai.com") || (window.self !== window.top);
-    if (hostHint) {
-      if (isChatGPT) {
-        hostHint.textContent = "ChatGPT önizlemesindesin. Telefonun açması için canlı sitenin (Vercel vb.) linkini girebilirsin.";
-      } else {
-        hostHint.textContent = "Canlı site adresin";
-      }
-    }
-
-    if (directUrlInput) directUrlInput.value = qrUrl;
     renderQrSvg(qrUrl, container, downloadBtn, item.slug);
 
     dialog.showModal();
@@ -397,29 +383,6 @@
     });
     qs("#closeQrDialog")?.addEventListener("click", closeQrModal);
     qs("#qrDialog")?.addEventListener("cancel", e => { e.preventDefault(); closeQrModal(); });
-    qs("#saveQrBaseUrlBtn")?.addEventListener("click", () => {
-      const val = qs("#qrBaseUrlInput")?.value.trim();
-      if (val) {
-        localStorage.setItem("teknosoz-live-url", val);
-        showToast("Canlı site adresi kaydedildi! Karekod güncellendi.");
-        openQrModal(state.currentItem ? state.currentItem.slug : data[0].slug);
-        if (state.currentItem) openDetail(state.currentItem.slug, { push: false });
-      } else {
-        localStorage.removeItem("teknosoz-live-url");
-        showToast("Varsayılan adrese dönüldü.");
-        openQrModal(state.currentItem ? state.currentItem.slug : data[0].slug);
-      }
-    });
-    qs("#copyQrUrlBtn")?.addEventListener("click", async () => {
-      const url = qs("#qrDirectUrl")?.value;
-      if (!url) return;
-      try {
-        await navigator.clipboard.writeText(url);
-        showToast("Karekod bağlantısı panoya kopyalandı!");
-      } catch (_) {
-        showToast("Bağlantı kopyalanamadı.");
-      }
-    });
     window.addEventListener("popstate", routeFromUrl);
     window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); state.deferredInstall = e; });
     qs("#installButton").addEventListener("click", async () => {
