@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#07131f" />
+    <meta name="description" content="Teknolojik araçları 3B modeller ve artırılmış gerçeklikle keşfet." />
+    <title>TeknoSöz 3B — Teknoloji Sözlüğü</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./assets/icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">İçeriğe geç</a>
+    <div class="noise" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <a class="brand" href="./" data-route="home" aria-label="TeknoSöz ana sayfa">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>TEKNO<span>SÖZ</span></span>
+      </a>
+      <nav class="desktop-nav" aria-label="Ana menü">
+        <button class="nav-link active" data-route="home">Keşfet</button>
+        <button class="nav-link" data-route="dictionary">Sözlük</button>
+        <button class="nav-link" data-route="about">Proje</button>
+      </nav>
+      <button class="icon-button scan-trigger" type="button" aria-label="QR kod okut">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h5v2H6v3H4V4Zm11 0h5v5h-2V6h-3V4ZM4 15h2v3h3v2H4v-5Zm14 0h2v5h-5v-2h3v-3ZM8 8h8v8H8V8Zm2 2v4h4v-4h-4Z"/></svg>
+        <span>QR Okut</span>
+      </button>
+    </header>
+
+    <main id="main">
+      <section id="homeView" class="view active" aria-labelledby="heroTitle">
+        <div class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow"><span></span> MEB PROJE ÇALIŞMASI · 2026</p>
+            <h1 id="heroTitle">Teknolojiye<br /><em>dokunarak</em> öğren.</h1>
+            <p class="hero-lead">Havacılık, uzay ve robotik dünyasının araçlarını incele. Modelleri döndür, yakından bak ve kameranla gerçek dünyaya taşı.</p>
+            <div class="hero-actions">
+              <button class="primary-button" data-route="dictionary">
+                Sözlüğü keşfet
+                <span aria-hidden="true">↗</span>
+              </button>
+              <button class="text-button scan-trigger"><span class="scan-mini" aria-hidden="true"></span> QR kod okut</button>
+            </div>
+            <div class="hero-stats" aria-label="Proje istatistikleri">
+              <div><strong>08</strong><span>3B araç</span></div>
+              <div><strong>04</strong><span>kategori</span></div>
+              <div><strong>AR</strong><span>kamera modu</span></div>
+            </div>
+          </div>
+
+          <div class="hero-visual" aria-label="Etkileşimli İHA modeli">
+            <div class="orbit orbit-one"></div>
+            <div class="orbit orbit-two"></div>
+            <div class="visual-label label-top"><span></span> İNSANSIZ HAVA ARACI</div>
+            <model-viewer id="heroModel" src="./assets/models/iha.glb" alt="Döndürülebilir üç boyutlu İHA modeli" camera-controls auto-rotate autoplay shadow-intensity="1.2" exposure="1.05" interaction-prompt="none"></model-viewer>
+            <div class="drag-hint"><span>↔</span> Döndürmek için sürükle</div>
+            <div class="coordinate" aria-hidden="true">X 41.02<br />Y 28.97<br />Z 1.42</div>
+          </div>
+        </div>
+
+        <section class="category-strip" aria-label="Kategoriler">
+          <button data-category="Havacılık"><span>01</span> Havacılık <b>→</b></button>
+          <button data-category="Uzay"><span>02</span> Uzay <b>→</b></button>
+          <button data-category="Robotik"><span>03</span> Robotik <b>→</b></button>
+          <button data-category="Ulaşım"><span>04</span> Ulaşım <b>→</b></button>
+        </section>
+
+        <section class="featured-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow"><span></span> ÖNE ÇIKANLAR</p>
+              <h2>Bugün neyi<br />keşfetmek istersin?</h2>
+            </div>
+            <button class="outline-button" data-route="dictionary">Tümünü gör <span>→</span></button>
+          </div>
+          <div id="featuredGrid" class="featured-grid"></div>
+        </section>
+
+        <section class="how-section">
+          <div class="how-card">
+            <p class="eyebrow light"><span></span> NASIL ÇALIŞIR?</p>
+            <h2>Bir kod.<br />Yeni bir dünya.</h2>
+            <div class="steps">
+              <div><b>01</b><span><strong>Kodu okut</strong>Basılı sözlükteki QR kodu telefonunun kamerasıyla tara.</span></div>
+              <div><b>02</b><span><strong>Modeli keşfet</strong>Aracı 360° döndür, yakınlaştır ve parçalarını öğren.</span></div>
+              <div><b>03</b><span><strong>Gerçeğe taşı</strong>AR moduyla modeli çevrendeki dünyada görüntüle.</span></div>
+            </div>
+          </div>
+          <div class="qr-demo" aria-hidden="true">
+            <div class="phone-shell">
+              <div class="phone-speaker"></div>
+              <div class="phone-screen">
+                <div class="scan-corner tl"></div><div class="scan-corner tr"></div>
+                <div class="scan-corner bl"></div><div class="scan-corner br"></div>
+                <div class="fake-qr"></div>
+                <div class="scan-line"></div>
+                <span>QR KODU KADRAJA AL</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section id="dictionaryView" class="view dictionary-view" aria-labelledby="dictionaryTitle">
+        <div class="page-intro">
+          <p class="eyebrow"><span></span> DİJİTAL SÖZLÜK</p>
+          <h1 id="dictionaryTitle">Keşfetmeye başla.</h1>
+          <p>Bir araç ara veya kategorilere göre filtrele.</p>
+        </div>
+        <div class="search-panel">
+          <label class="search-box">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 20-5.1-5.1a7 7 0 1 0-1 1L20 21l1-1ZM5 10.5a5.5 5.5 0 1 1 11 0 5.5 5.5 0 0 1-11 0Z"/></svg>
+            <span class="sr-only">Sözlükte ara</span>
+            <input id="searchInput" type="search" placeholder="Araç veya kavram ara..." autocomplete="off" />
+            <kbd>⌘ K</kbd>
+          </label>
+          <div id="filterChips" class="filter-chips" aria-label="Kategori filtreleri"></div>
+        </div>
+        <p id="resultCount" class="result-count" aria-live="polite"></p>
+        <div id="dictionaryGrid" class="dictionary-grid"></div>
+        <div id="emptyState" class="empty-state" hidden>
+          <span>⌁</span><h2>Sonuç bulunamadı</h2><p>Başka bir sözcük veya kategori deneyebilirsin.</p>
+        </div>
+      </section>
+
+      <section id="detailView" class="view detail-view" aria-live="polite"></section>
+
+      <section id="aboutView" class="view about-view" aria-labelledby="aboutTitle">
+        <div class="page-intro">
+          <p class="eyebrow"><span></span> PROJE HAKKINDA</p>
+          <h1 id="aboutTitle">Öğrenmenin yeni boyutu.</h1>
+          <p>TeknoSöz 3B; kavramları yalnızca okumak yerine, görerek ve etkileşime girerek öğrenmek için tasarlandı.</p>
+        </div>
+        <div class="about-grid">
+          <article><span>01</span><h2>Amaç</h2><p>Teknolojik araçlarla ilgili temel kavramları öğrenciler için anlaşılır, eğlenceli ve kalıcı hâle getirmek.</p></article>
+          <article><span>02</span><h2>Yöntem</h2><p>Her sözlük maddesini özgün bir QR kod, kısa bilgi kartı, etkileşimli 3B model ve kamera deneyimiyle birleştirmek.</p></article>
+          <article><span>03</span><h2>Teknoloji</h2><p>Mobil öncelikli web uygulaması, çevrimdışı PWA desteği ve gelecekte Android APK paketleme altyapısı.</p></article>
+        </div>
+        <div class="project-note">
+          <span class="project-note-icon">⌁</span>
+          <div><p>PROJE CÜMLESİ</p><blockquote>“Bir kavramı okumak başlangıçtır; onu üç boyutlu görmek ise anlamaya açılan kapıdır.”</blockquote></div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <a class="brand footer-brand" href="./" data-route="home"><span class="brand-mark"><i></i><i></i><i></i></span><span>TEKNO<span>SÖZ</span></span></a>
+      <p>MEB Proje Çalışması · Eğitim amacıyla geliştirilmiştir.</p>
+      <p>2026 · Türkiye</p>
+    </footer>
+
+    <nav class="mobile-nav" aria-label="Mobil menü">
+      <button data-route="home" class="active"><span>⌂</span>Ana sayfa</button>
+      <button data-route="dictionary"><span>⌕</span>Sözlük</button>
+      <button class="scan-trigger scan-fab" aria-label="QR kod okut"><span></span></button>
+      <button data-route="about"><span>◎</span>Proje</button>
+      <button id="installButton"><span>⇩</span>Yükle</button>
+    </nav>
+
+    <dialog id="cameraDialog" class="camera-dialog">
+      <div class="camera-stage">
+        <video id="cameraVideo" playsinline muted></video>
+        <canvas id="arCanvas"></canvas>
+        <div class="camera-shade"></div>
+        <div class="camera-header">
+          <div><span id="cameraModeLabel">AR MODU</span><strong id="cameraTitle">Modeli ortamına yerleştir</strong></div>
+          <button id="closeCamera" class="round-button" aria-label="Kamerayı kapat">×</button>
+        </div>
+        <div id="scannerFrame" class="scanner-frame" hidden><i></i><i></i><i></i><i></i><span></span></div>
+        <div id="cameraMessage" class="camera-message" hidden></div>
+        <div class="camera-controls">
+          <p id="cameraHint">Modeli döndürmek için sürükle · boyut için kaydır</p>
+          <div>
+            <button id="sizeDown" class="round-button" aria-label="Modeli küçült">−</button>
+            <button id="captureButton" class="capture-button" aria-label="Fotoğraf çek"><span></span></button>
+            <button id="sizeUp" class="round-button" aria-label="Modeli büyüt">+</button>
+          </div>
+        </div>
+      </div>
+    </dialog>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script type="module" src="./vendor/model-viewer.min.js"></script>
+    <script src="./data.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "teknosoz-3b",
+  "version": "1.0.0",
+  "private": true,
+  "description": "QR kodlu, 3B ve AR destekli teknoloji sözlüğü",
+  "scripts": {
+    "serve": "npx serve dist",
+    "check": "node scripts/check.mjs",
+    "qr": "node scripts/generate-qr.mjs"
+  },
+  "devDependencies": {
+    "qrcode": "^1.5.4"
+  }
+}

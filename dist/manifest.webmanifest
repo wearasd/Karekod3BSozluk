@@ -1,0 +1,16 @@
+{
+  "name": "TeknoSöz 3B — Teknoloji Sözlüğü",
+  "short_name": "TeknoSöz",
+  "description": "Teknolojik araçları 3B modeller ve kamera AR deneyimiyle keşfet.",
+  "lang": "tr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f4f1e8",
+  "theme_color": "#07131f",
+  "categories": ["education", "science"],
+  "icons": [
+    { "src": "./assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

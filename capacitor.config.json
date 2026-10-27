@@ -1,0 +1,6 @@
+{
+  "appId": "tr.edu.teknosoz",
+  "appName": "TeknoSöz 3B",
+  "webDir": "dist",
+  "server": { "androidScheme": "https" }
+}
