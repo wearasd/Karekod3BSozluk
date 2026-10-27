@@ -11,7 +11,7 @@ const qrSource = await readFile(join(root, "scripts", "generate-qr.mjs"), "utf8"
 const slugs = [...dataSource.matchAll(/slug: "([^"]+)"/g)].map(match => match[1]);
 if (slugs.length !== 8 || new Set(slugs).size !== slugs.length) throw new Error("Sözlük verisi geçersiz.");
 if (!dataSource.includes('name: "Robot"') || !dataSource.includes('name: "Uzay Keşif Aracı"')) throw new Error("Güncel sözlük adları bulunamadı.");
-if (!appSource.includes('params.get("qr") === "1"') || !appSource.includes('model-viewer')) throw new Error("QR kilit akışı eksik.");
+if (!appSource.includes('params.get("qr") === "1"') || !appSource.includes('class="locked-model"')) throw new Error("QR kilit akışı eksik.");
 if (!qrSource.includes('url.searchParams.set("qr", "1")')) throw new Error("QR bağlantısı kilit açma parametresini içermiyor.");
 for (const slug of slugs) await access(join(root, "dist", "assets", "qr", `${slug}.svg`));
 for (const slug of slugs) await access(join(root, "dist", "assets", "models", `${slug}.glb`));

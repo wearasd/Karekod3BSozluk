@@ -114,16 +114,28 @@
     views.detail.innerHTML = `
       <div class="detail-layout">
         <div class="detail-model">
-          <span class="model-caption">${unlocked ? "📱 QR DOĞRULANDI · 3B MODEL AÇIK" : "3B ETKİLEŞİMLİ MODEL"}</span>
-          <model-viewer id="detailModel" src="${item.asset}" alt="Döndürülebilir ${escapeHtml(item.name)} modeli" camera-controls auto-rotate autoplay ${item.animation ? `animation-name="${item.animation}"` : ""} ar ar-modes="webxr scene-viewer quick-look" shadow-intensity="1.25" shadow-softness=".8" exposure="1.05" interaction-prompt="auto"></model-viewer>
-          <div class="model-toolbar">
-            <span>↔ Döndür · kaydırarak yakınlaştır</span>
-            <div>
-              <button id="resetModel">Görünümü sıfırla</button>
-              <button id="openModelQrBtn" class="outline-button" style="font-size: 11px;">📱 Karekod</button>
-              <button class="ar-open">⌾ AR ile görüntüle</button>
+          <span class="model-caption">${unlocked ? "📱 QR DOĞRULANDI · 3B MODEL AÇIK" : "3B MODEL · TELEFONLA OKUT"}</span>
+          ${unlocked ? `
+            <model-viewer id="detailModel" src="${item.asset}" alt="Döndürülebilir ${escapeHtml(item.name)} modeli" camera-controls auto-rotate autoplay ${item.animation ? `animation-name="${item.animation}"` : ""} ar ar-modes="scene-viewer webxr quick-look" ar-scale="auto" shadow-intensity="1.25" shadow-softness=".8" exposure="1.05" interaction-prompt="auto"></model-viewer>
+            <div class="model-toolbar">
+              <span>↔ Döndür · kaydırarak yakınlaştır</span>
+              <div>
+                <button id="resetModel">Görünümü sıfırla</button>
+                <button id="openModelQrBtn" class="outline-button" style="font-size: 11px;">📱 Karekod</button>
+                <button class="ar-open">⌾ AR ile görüntüle</button>
+              </div>
             </div>
-          </div>
+          ` : `
+            <div class="locked-model">
+              <div class="locked-glyph">${escapeHtml(item.glyph)}</div>
+              <div id="lockedQrBox" class="locked-qr-preview" title="Karekodu büyütmek için tıkla"></div>
+              <h2>3B Modeli Telefonda Gör</h2>
+              <p>Telefonunun kamerasını açıp bu karekodu okut; 3B model telefonunda anında açılsın!</p>
+              <div style="z-index:2;">
+                <button class="primary-button unlock-model-button" style="background: var(--orange); color: white; padding: 12px 28px; font-size: 14px;">Karekodu Büyüt <span>⌗</span></button>
+              </div>
+            </div>
+          `}
         </div>
         <article class="detail-copy">
           <button class="back-button" data-route="dictionary">← Sözlüğe dön</button>
@@ -155,6 +167,11 @@
     updateActiveNav("dictionary");
 
     const qrUrl = getItemQrUrl(item.slug);
+    const lockedQrBox = qs("#lockedQrBox");
+    if (lockedQrBox) {
+      renderQrSvg(qrUrl, lockedQrBox, null, item.slug);
+      lockedQrBox.addEventListener("click", () => openQrModal(item.slug));
+    }
     const detailQrBox = qs("#detailQrBox");
     const detailQrDownload = qs("#detailQrDownload");
     if (detailQrBox) {
@@ -163,6 +180,7 @@
     }
     qs("#enlargeQrBtn")?.addEventListener("click", () => openQrModal(item.slug));
     qs("#openModelQrBtn")?.addEventListener("click", () => openQrModal(item.slug));
+    qs(".unlock-model-button")?.addEventListener("click", () => openQrModal(item.slug));
 
     const detailModel = qs("#detailModel");
     if (detailModel) {
@@ -173,13 +191,32 @@
         detailModel.resetTurntableRotation?.();
       });
       qs(".ar-open")?.addEventListener("click", async () => {
-        if (!detailModel.canActivateAR) {
-          openQrModal(item.slug);
-          showToast("AR modu için telefonunla bu karekodu okut.");
-          return;
+        try {
+          if (detailModel.canActivateAR) {
+            await detailModel.activateAR();
+          } else {
+            // Android fallback direct intent
+            const isAndroid = /android/i.test(navigator.userAgent);
+            const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+            const modelAbsoluteUrl = new URL(item.asset, location.href).href;
+            if (isAndroid) {
+              const sceneViewerUrl = `intent://arvr.google.com/scene-viewer/1.2?file=${encodeURIComponent(modelAbsoluteUrl)}&mode=ar_only&title=${encodeURIComponent(item.name)}#Intent;scheme=https;package=com.google.ar.core;action=android.intent.action.VIEW;S.browser_fallback_url=${encodeURIComponent(location.href)};end;`;
+              window.location.href = sceneViewerUrl;
+            } else if (isIOS) {
+              openQrModal(item.slug);
+              showToast("iOS Quick Look için Safari tarayıcısını kullanabilirsiniz.");
+            } else {
+              openQrModal(item.slug);
+              showToast("AR modu için telefonunla bu karekodu okut.");
+            }
+          }
+        } catch (_) {
+          try {
+            await detailModel.activateAR();
+          } catch (e) {
+            showToast("AR modu başlatılamadı. Cihazının AR desteğini kontrol edebilirsin.");
+          }
         }
-        try { await detailModel.activateAR(); }
-        catch (_) { showToast("AR modu başlatılamadı. Kamera iznini kontrol edebilirsin."); }
       });
     }
 
