@@ -354,19 +354,6 @@
     qs("#qrDialogTitle").textContent = `${item.name} (${item.longName})`;
     qs("#qrDialogDesc").textContent = `Telefonunun kamerasını açıp bu karekodu okut; ${item.name} 3B modeli telefonunda anında açılsın!`;
 
-    const selector = qs("#qrItemSelector");
-    if (selector) {
-      selector.innerHTML = data.map(entry => `
-        <button type="button" class="${entry.slug === item.slug ? 'active' : ''}" data-qr-slug="${entry.slug}">
-          ${escapeHtml(entry.glyph)} ${escapeHtml(entry.name)}
-        </button>
-      `).join("");
-
-      qsa("[data-qr-slug]", selector).forEach(btn => {
-        btn.addEventListener("click", () => openQrModal(btn.dataset.qrSlug));
-      });
-    }
-
     const qrUrl = getItemQrUrl(item.slug);
     const container = qs("#qrCodeContainer");
     const directUrlInput = qs("#qrDirectUrl");
