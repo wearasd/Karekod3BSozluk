@@ -116,7 +116,9 @@
         <div class="detail-model">
           <span class="model-caption">${unlocked ? "📱 QR DOĞRULANDI · 3B MODEL AÇIK" : "3B MODEL · TELEFONLA OKUT"}</span>
           ${unlocked ? `
-            <model-viewer id="detailModel" src="${item.asset}" alt="Döndürülebilir ${escapeHtml(item.name)} modeli" camera-controls auto-rotate autoplay ${item.animation ? `animation-name="${item.animation}"` : ""} ar ar-modes="scene-viewer webxr quick-look" ar-scale="auto" shadow-intensity="1.25" shadow-softness=".8" exposure="1.05" interaction-prompt="auto"></model-viewer>
+            <model-viewer id="detailModel" src="${item.asset}" alt="Döndürülebilir ${escapeHtml(item.name)} modeli" camera-controls auto-rotate autoplay ${item.animation ? `animation-name="${item.animation}"` : ""} ar ar-modes="webxr scene-viewer quick-look" shadow-intensity="1.25" shadow-softness=".8" exposure="1.05" interaction-prompt="auto">
+              <button slot="ar-button" id="modelViewerArBtn" style="display:none;"></button>
+            </model-viewer>
             <div class="model-toolbar">
               <span>↔ Döndür · kaydırarak yakınlaştır</span>
               <div>
@@ -190,33 +192,31 @@
         detailModel.fieldOfView = "30deg";
         detailModel.resetTurntableRotation?.();
       });
-      qs(".ar-open")?.addEventListener("click", async () => {
-        try {
-          if (detailModel.canActivateAR) {
-            await detailModel.activateAR();
-          } else {
-            // Android fallback direct intent
-            const isAndroid = /android/i.test(navigator.userAgent);
-            const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-            const modelAbsoluteUrl = new URL(item.asset, location.href).href;
-            if (isAndroid) {
-              const sceneViewerUrl = `intent://arvr.google.com/scene-viewer/1.2?file=${encodeURIComponent(modelAbsoluteUrl)}&mode=ar_only&title=${encodeURIComponent(item.name)}#Intent;scheme=https;package=com.google.ar.core;action=android.intent.action.VIEW;S.browser_fallback_url=${encodeURIComponent(location.href)};end;`;
-              window.location.href = sceneViewerUrl;
-            } else if (isIOS) {
-              openQrModal(item.slug);
-              showToast("iOS Quick Look için Safari tarayıcısını kullanabilirsiniz.");
-            } else {
-              openQrModal(item.slug);
-              showToast("AR modu için telefonunla bu karekodu okut.");
-            }
-          }
-        } catch (_) {
-          try {
-            await detailModel.activateAR();
-          } catch (e) {
-            showToast("AR modu başlatılamadı. Cihazının AR desteğini kontrol edebilirsin.");
-          }
+      qs(".ar-open")?.addEventListener("click", () => {
+        const slotBtn = qs("#modelViewerArBtn");
+        if (slotBtn && detailModel.canActivateAR) {
+          slotBtn.click();
+          return;
         }
+
+        if (detailModel.canActivateAR) {
+          detailModel.activateAR().catch(() => {
+            showToast("AR modu başlatılamadı. Tarayıcının kamera izinlerini kontrol edebilirsin.");
+          });
+          return;
+        }
+
+        const isMobile = /android|iphone|ipad|ipod/i.test(navigator.userAgent);
+        if (!isMobile) {
+          openQrModal(item.slug);
+          showToast("AR deneyimi için telefonunun kamerasıyla bu karekodu okut.");
+          return;
+        }
+
+        // Mobilde doğrudan model-viewer native activateAR dene
+        detailModel.activateAR().catch(() => {
+          showToast("Cihazında AR (Google Play AR veya WebXR) desteklenmiyor olabilir.");
+        });
       });
     }
 
